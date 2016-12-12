@@ -20,17 +20,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>Parent</artifactId>
-        <groupId>nz.co.testamation</groupId>
+        <artifactId>testamation-parent</artifactId>
+        <groupId>com.github.rlon008</groupId>
         <version>1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>TomcatHttpMock</artifactId>
 
-
-    <properties>
-        <tomcat.version>8.0.24</tomcat.version>
-    </properties>
+    <artifactId>testamation-hibernate-support</artifactId>
 
     <dependencies>
         <dependency>
@@ -38,12 +34,23 @@
             <artifactId>Core</artifactId>
             <version>1.0</version>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <version>${tomcat.version}</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>4.3.10.Final</version>
+            <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>4.1.7.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
+
 
 </project>
