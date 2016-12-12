@@ -18,7 +18,6 @@ package nz.co.testamation.testcommon.template;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import nz.co.testamation.common.util.ReflectionUtil;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -158,7 +157,7 @@ public class MockitoTestTemplate {
     }
 
     public void assertField( Object object, String fieldName, Matcher matcher ) {
-        MatcherAssert.assertThat( ReflectionUtil.getFieldValue( object, fieldName ), matcher );
+        MatcherAssert.assertThat( FieldUtil.getFieldValue( object, fieldName ), matcher );
     }
 
     public static <T> Matcher<T> equalTo( T operand ) {
@@ -166,11 +165,11 @@ public class MockitoTestTemplate {
     }
 
     public void setField( Object obj, String fieldName, Object value ) {
-        ReflectionUtil.setField( obj, fieldName, value );
+        FieldUtil.setField( obj, fieldName, value );
     }
 
     public <T> T getField( Object obj, String fieldName, Class<T> clazz ) {
-        return ReflectionUtil.getFieldValue( obj, fieldName, clazz );
+        return FieldUtil.getFieldValue( obj, fieldName, clazz );
     }
 
 

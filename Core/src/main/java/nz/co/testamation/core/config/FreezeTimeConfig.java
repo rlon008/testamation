@@ -16,7 +16,7 @@
 
 package nz.co.testamation.core.config;
 
-import nz.co.testamation.common.Clock;
+import nz.co.testamation.common.time.Clock;
 import nz.co.testamation.common.util.ReflectionUtil;
 import nz.co.testamation.core.lifecycle.annotation.TearDown;
 

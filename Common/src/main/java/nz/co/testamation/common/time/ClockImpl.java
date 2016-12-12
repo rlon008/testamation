@@ -14,16 +14,31 @@
  * limitations under the License.
  */
 
-package nz.co.testamation.common;
+package nz.co.testamation.common.time;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public interface Clock {
+public class ClockImpl implements Clock {
 
-    LocalDateTime now();
+    private final java.time.Clock delegate;
 
-    long currentTimestampMillis();
+    public ClockImpl( java.time.Clock delegate ) {
+        this.delegate = delegate;
+    }
 
-    LocalDate today();
+    @Override
+    public LocalDateTime now() {
+        return LocalDateTime.now( delegate );
+    }
+
+    @Override
+    public long currentTimestampMillis() {
+        return delegate.millis();
+    }
+
+    @Override
+    public LocalDate today() {
+        return LocalDate.now( delegate );
+    }
 }
