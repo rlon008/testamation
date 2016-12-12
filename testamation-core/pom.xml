@@ -47,11 +47,6 @@
             <version>1.8.10</version>
         </dependency>
 
-        <dependency>
-            <groupId>nz.co.testamation</groupId>
-            <artifactId>Common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -141,10 +136,15 @@
             <version>1.4.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.rlon008</groupId>
+            <artifactId>testamation-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
-            <groupId>nz.co.testamation</groupId>
-            <artifactId>TestCommon</artifactId>
+            <groupId>com.github.rlon008</groupId>
+            <artifactId>testamation-test-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -30,9 +30,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>nz.co.testamation</groupId>
-            <artifactId>Core</artifactId>
-            <version>1.0</version>
+            <groupId>com.github.rlon008</groupId>
+            <artifactId>testamation-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
