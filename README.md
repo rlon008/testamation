@@ -2,5 +2,4 @@
 ### Authors: Ratha Long & Paul Jacobs
 Functional/integration test framework for web projects
 
-Testing changes
 
