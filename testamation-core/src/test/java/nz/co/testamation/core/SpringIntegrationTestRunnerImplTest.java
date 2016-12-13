@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Stack;
 
-public class IntegrationTestRunnerImplTest {
+public class SpringIntegrationTestRunnerImplTest {
 
     abstract class Template extends MockitoTestTemplate {
 
@@ -42,7 +42,7 @@ public class IntegrationTestRunnerImplTest {
         AutowireCapableBeanFactory autowireCapableBeanFactory = mock( AutowireCapableBeanFactory.class );
 
 
-        IntegrationTestRunnerImpl integrationTestRunner = new IntegrationTestRunnerImpl( applicationContext, lifeCyclePhaseFactory );
+        SpringIntegrationTestRunner integrationTestRunner = new SpringIntegrationTestRunner( applicationContext, lifeCyclePhaseFactory );
 
         TestTemplate test = mock( TestTemplate.class );
         Object lifeCycle1 = mock( Object.class );

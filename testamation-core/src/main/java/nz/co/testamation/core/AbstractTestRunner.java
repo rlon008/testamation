@@ -18,20 +18,16 @@ package nz.co.testamation.core;
 
 import com.google.common.collect.Lists;
 import nz.co.testamation.core.config.Config;
-import nz.co.testamation.core.lifecycle.DynamicProxyLifeCyclePhaseFactory;
 import nz.co.testamation.core.lifecycle.LifeCyclePhase;
 import nz.co.testamation.core.lifecycle.LifeCyclePhaseFactory;
-import nz.co.testamation.core.lifecycle.annotation.TestLifeCycle;
 import nz.co.testamation.core.step.Step;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
+public abstract class AbstractTestRunner implements IntegrationTestRunner {
 
-    private final ApplicationContext applicationContext;
     private final LifeCyclePhaseFactory lifeCyclePhaseFactory;
 
     private List<LifeCyclePhase> resets = Lists.newArrayList();
@@ -41,17 +37,11 @@ public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
     private List<LifeCyclePhase> afterExternalBehaviours = Lists.newArrayList();
     private Stack<LifeCyclePhase> tearDowns = new Stack<>();
 
-    public IntegrationTestRunnerImpl( ApplicationContext applicationContext, LifeCyclePhaseFactory lifeCyclePhaseFactory ) {
-        this.applicationContext = applicationContext;
+    public AbstractTestRunner( LifeCyclePhaseFactory lifeCyclePhaseFactory ) {
         this.lifeCyclePhaseFactory = lifeCyclePhaseFactory;
-
     }
 
-    public IntegrationTestRunnerImpl( ApplicationContext applicationContext ) {
-        this( applicationContext, new DynamicProxyLifeCyclePhaseFactory() );
-    }
-
-    private void init() {
+    protected void init() {
         resets.clear();
         afterSteps.clear();
         afterGivens.clear();
@@ -59,25 +49,25 @@ public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
         afterWhens.clear();
         tearDowns.clear();
 
-        Map<String, Object> lifecycleBeans = applicationContext.getBeansWithAnnotation( TestLifeCycle.class );
+        Map<String, Object> lifecycleBeans = getTestLifeCycleBeans();
         for ( Object bean : lifecycleBeans.values() ) {
             resets.addAll( lifeCyclePhaseFactory.createReset( bean ) );
             afterSteps.addAll( lifeCyclePhaseFactory.createAfterStep( bean ) );
             afterGivens.addAll( lifeCyclePhaseFactory.createAfterGiven( bean ) );
             afterExternalBehaviours.addAll( lifeCyclePhaseFactory.createAfterExternalBehaviour( bean ) );
             afterWhens.addAll( lifeCyclePhaseFactory.createAfterWhen( bean ) );
-            List<LifeCyclePhase> tearDowns = lifeCyclePhaseFactory.createTearDown( bean );
-            for ( LifeCyclePhase tearDown : tearDowns ) {
-                this.tearDowns.push( tearDown );
-
-            }
+            lifeCyclePhaseFactory.createTearDown( bean ).forEach( this.tearDowns::push );
         }
     }
+
+    protected abstract Map<String, Object> getTestLifeCycleBeans();
+
+    protected abstract void autowireBean( Object obj );
 
     @Override
     public void run( TestTemplate test ) throws Exception {
         init();
-        applicationContext.getAutowireCapableBeanFactory().autowireBean( test );
+        autowireBean( test );
         tearDowns.push( lifeCyclePhaseFactory.createTearDown( test ) );
         try {
             reset();
@@ -96,7 +86,7 @@ public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
 
     @Override
     public <T> T run( Step<T> step ) throws Exception {
-        applicationContext.getAutowireCapableBeanFactory().autowireBean( step );
+        autowireBean( step );
         T result = step.run();
         lifeCyclePhaseFactory.createTearDown( step ).forEach( tearDowns::push );
         afterSteps();
@@ -105,7 +95,7 @@ public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
 
     @Override
     public <T> T apply( Config<T> config ) throws Exception {
-        applicationContext.getAutowireCapableBeanFactory().autowireBean( config );
+        autowireBean( config );
         T result = config.apply();
         lifeCyclePhaseFactory.createTearDown( config ).forEach( tearDowns::push );
         return result;
@@ -131,7 +121,7 @@ public class IntegrationTestRunnerImpl implements IntegrationTestRunner {
     }
 
     private void tearDowns() throws Exception {
-        while( !tearDowns.isEmpty() && tearDowns.peek() !=null ) {
+        while ( !tearDowns.isEmpty() && tearDowns.peek() != null ) {
             tearDowns.pop().run();
         }
     }

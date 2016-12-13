@@ -175,7 +175,7 @@ public class WebIntegrationTestAutoConfiguration {
     @Bean
     @Autowired
     public IntegrationTestRunner integrationTestRunner( ApplicationContext applicationContext ) {
-        return new IntegrationTestRunnerImpl( applicationContext );
+        return new SpringIntegrationTestRunner( applicationContext );
     }
 
 }
