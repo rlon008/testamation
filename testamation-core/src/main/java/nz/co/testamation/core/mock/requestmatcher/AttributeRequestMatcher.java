@@ -62,20 +62,21 @@ public abstract class AttributeRequestMatcher<T extends AttributeRequestMatcher>
         }
 
         for ( Map.Entry<String, Matcher> attribute : attributeMatchers.entrySet() ) {
-
-            if ( !actualAttributes.containsKey( attribute.getKey() ) ) {
-                logger.error( String.format( "Expected request attributes to contain key %s. Actual was: %s", attribute.getKey(), actualAttributes ) );
+            Object actualValue;
+            try {
+                actualValue = getActualValueFromElExpression( attribute.getKey() );
+            } catch ( Exception ex ) {
+                logger.error( String.format( "Expected request attributes to contain key %s. Actual attributes (map) was: %s", attribute.getKey(), actualAttributes ) );
                 return false;
             }
 
-            Object requestValue = actualAttributes.get( attribute.getKey() );
-
             if ( attribute.getValue() != null ) {
-                if ( !matches( attribute.getKey(), attribute.getValue(), requestValue ) ) {
+                if ( !matches( attribute.getKey(), attribute.getValue(), actualValue ) ) {
                     return false;
                 }
             }
         }
+
         if ( attributeSizeMatcher != null ) {
             if ( !attributeSizeMatcher.matches( actualAttributes.size() ) ) {
                 logger.error( String.format( "Expected number of attributes to be %s, but was %s ", attributeSizeMatcher, actualAttributes.size() ) );
@@ -84,6 +85,14 @@ public abstract class AttributeRequestMatcher<T extends AttributeRequestMatcher>
         }
 
         return true;
+    }
+
+    private Object getActualValueFromElExpression( String expression ) {
+        Object value = actualAttributes;
+        for ( String key : expression.split( "\\." ) ) {
+            value = ( (Map) value ).get( key );
+        }
+        return value;
     }
 
     private boolean matches( String key, Matcher matcher, Object requestValue ) {
